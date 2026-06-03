@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Estoque</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        neutral: '#1D2129',
+                        light: '#F2F3F5',
+                        danger: '#F53F3F',
+                        success: '#00B42A'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .row-highlight {
+                @apply hover:bg-primary/5 transition-colors duration-200;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-neutral min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- Cabeçalho com Dados do Desenvolvedor -->
+        <header class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-[clamp(1.75rem,3vw,2.5rem)] font-bold text-primary flex items-center gap-3">
+                    <i class="fa fa-cubes"></i>
+                    Sistema de Gestão de Estoque
+                </h1>
+                <p class="text-gray-600 mt-2">Controle seus produtos, estoque e valores de forma simples e eficiente</p>
+            </div>
+
+            <!-- Seção do Desenvolvedor -->
+            <div class="bg-white px-4 py-3 rounded-lg shadow-sm border border-gray-100">
+                <p class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <i class="fa fa-code text-primary"></i>
+                    Desenvolvedor / José henrique de sousa
+                </p>
+                <div class="space-y-1 text-sm">
+                    <p class="flex items-center gap-2 text-gray-600">
+                        <i class="fa fa-phone text-secondary"></i>
+                        (21) 98832-9413
+                    </p>
+                    <p class="flex items-center gap-2 text-gray-600">
+                        <i class="fa fa-envelope text-secondary"></i>
+                        ryckydesousa2010@gmail.com
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Formulário de Cadastro -->
+        <section class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+            <h2 class="text-xl font-semibold mb-5 flex items-center gap-2">
+                <i class="fa fa-plus-circle text-secondary"></i>
+                Cadastrar Novo Produto
+            </h2>
+            
+            <form id="formProduto" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
+                    <input type="text" id="nome" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Ex: Notebook, Mouse..." required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                    <select id="categoria" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        <option value="Eletrônicos">Eletrônicos</option>
+                        <option value="Acessórios">Acessórios</option>
+                        <option value="Móveis">Móveis</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+                    <input type="number" id="quantidade" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unitário (R$)</label>
+                    <input type="number" id="valor" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                </div>
+                
+                <div class="md:col-span-5 flex justify-end">
+                    <button type="submit" class="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                        <i class="fa fa-save"></i> Salvar Produto
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Filtros e Ações -->
+        <section class="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Buscar Produto</label>
+                    <div class="relative">
+                        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="busca" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Digite o nome do produto...">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
+                    <select id="filtroCategoria" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        <option value="todas">Todas as categorias</option>
+                        <option value="Eletrônicos">Eletrônicos</option>
+                        <option value="Acessórios">Acessórios</option>
+                        <option value="Móveis">Móveis</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ordenar por</label>
+                    <select id="ordenarPor" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        <option value="nome-asc">Nome (A-Z)</option>
+                        <option value="nome-desc">Nome (Z-A)</option>
+                        <option value="quantidade-asc">Quantidade (Menor→Maior)</option>
+                        <option value="quantidade-desc">Quantidade (Maior→Menor)</option>
+                        <option value="valor-asc">Valor (Menor→Maior)</option>
+                        <option value="valor-desc">Valor (Maior→Menor)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabela de Produtos -->
+        <section class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
+            <h2 class="text-xl font-semibold mb-5 flex items-center gap-2">
+                <i class="fa fa-table text-secondary"></i>
+                Lista de Produtos
+            </h2>
+            
+            <div class="overflow-x-auto scrollbar-hide rounded-lg border border-gray-200">
+                <table class="w-full min-w-[640px]">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nome</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Categoria</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Quantidade</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Valor Unitário</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Valor Total</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaProdutos" class="divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="7" class="px-4 py-6 text-center text-gray-500">Nenhum produto cadastrado ainda.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Relatórios -->
+        <section class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 class="text-xl font-semibold mb-5 flex items-center gap-2">
+                <i class="fa fa-chart-pie text-secondary"></i>
+                Relatório Gerencial
+            </h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-5 border border-primary/10">
+                    <p class="text-sm text-gray-600 mb-1">Total de Produtos</p>
+                    <p id="relTotalProdutos" class="text-3xl font-bold text-primary">0</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-secondary/10 to-secondary/5 rounded-xl p-5 border border-secondary/10">
+                    <p class="text-sm text-gray-600 mb-1">Quantidade em Estoque</p>
+                    <p id="relTotalQuantidade" class="text-3xl font-bold text-secondary">0</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-amber-500/10 to-amber-500/5 rounded-xl p-5 border border-amber-500/10">
+                    <p class="text-sm text-gray-600 mb-1">Valor Total do Estoque</p>
+                    <p id="relValorTotal" class="text-3xl font-bold text-amber-600">R$ 0,00</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-500/10 to-purple-500/5 rounded-xl p-5 border border-purple-500/10">
+                    <p class="text-sm text-gray-600 mb-1">Média de Valor</p>
+                    <p id="relMediaValor" class="text-3xl font-bold text-purple-600">R$ 0,00</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="modalEditar" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white rounded-xl w-full max-w-lg shadow-2xl transform transition-all">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-primary">Editar Produto</h3>
+                <button id="fecharModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="formEditar" class="p-6 space-y-4">
+                <input type="hidden" id="editId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
+                    <input type="text" id="editNome" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                    <select id="editCategoria" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                        <option value="Eletrônicos">Eletrônicos</option>
+                        <option value="Acessórios">Acessórios</option>
+                        <option value="Móveis">Móveis</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+                        <input type="number" id="editQuantidade" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unitário</label>
+                        <input type="number" id="editValor" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" required>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="btnCancelar" class="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+        let idEdicao = null;
+
+        const formProduto = document.getElementById('formProduto');
+        const tabelaProdutos = document.getElementById('tabelaProdutos');
+        const busca = document.getElementById('busca');
+        const filtroCategoria = document.getElementById('filtroCategoria');
+        const ordenarPor = document.getElementById('ordenarPor');
+        const modalEditar = document.getElementById('modalEditar');
+        const formEditar = document.getElementById('formEditar');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarTabela();
+            atualizarRelatorios();
+            adicionarEventos();
+        });
+
+        function adicionarEventos() {
+            formProduto.addEventListener('submit', cadastrarProduto);
+            busca.addEventListener('input', atualizarTabela);
+            filtroCategoria.addEventListener('change', atualizarTabela);
+            ordenarPor.addEventListener('change', atualizarTabela);
+            
+            document.getElementById('fecharModal').addEventListener('click', () => modalEditar.classList.add('hidden'));
+            document.getElementById('btnCancelar').addEventListener('click', () => modalEditar.classList.add('hidden'));
+            formEditar.addEventListener('submit', salvarEdicao);
+        }
+
+        function cadastrarProduto(e) {
+            e.preventDefault();
+            
+            const novoProduto = {
+                id: produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1,
+                nome: document.getElementById('nome').value,
+                categoria: document.getElementById('categoria').value,
+                quantidade: parseInt(document.getElementById('quantidade').value),
+                valor: parseFloat(document.getElementById('valor').value)
+            };
+
+            produtos.push(novoProduto);
+            salvarDados();
+            formProduto.reset();
+            atualizarTabela();
+            atualizarRelatorios();
+        }
+
+        function atualizarTabela() {
+            let dadosFiltrados = [...produtos];
+
+            const termoBusca = busca.value.toLowerCase().trim();
+            if (termoBusca) {
+                dadosFiltrados = dadosFiltrados.filter(p => 
+                    p.nome.toLowerCase().includes(termoBusca)
+                );
+            }
+
+            const categoriaSelecionada = filtroCategoria.value;
+            if (categoriaSelecionada !== 'todas') {
+                dadosFiltrados = dadosFiltrados.filter(p => 
+                    p.categoria === categoriaSelecionada
+                );
+            }
+
+            const ordem = ordenarPor.value;
+            dadosFiltrados.sort((a, b) => {
+                switch(ordem) {
+                    case 'nome-asc': return a.nome.localeCompare(b.nome);
+                    case 'nome-desc': return b.nome.localeCompare(a.nome);
+                    case 'quantidade-asc': return a.quantidade - b.quantidade;
+                    case 'quantidade-desc': return b.quantidade - a.quantidade;
+                    case 'valor-asc': return a.valor - b.valor;
+                    case 'valor-desc': return b.valor - a.valor;
+                    default: return 0;
+                }
+            });
+
+            tabelaProdutos.innerHTML = '';
+
+            if (dadosFiltrados.length === 0) {
+                tabelaProdutos.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-gray-500">Nenhum produto encontrado.</td></tr>`;
+                return;
+            }
+
+            dadosFiltrados.forEach(produto => {
+                const valorTotal = produto.quantidade * produto.valor;
+                
+                const linha = document.createElement('tr');
+                linha.className = 'row-highlight';
+                linha.innerHTML = `
+                    <td class="px-4 py-3 text-sm">${produto.id}</td>
+                    <td class="px-4 py-3 text-sm font-medium">${produto.nome}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">${produto.categoria}</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm">${produto.quantidade}</td>
+                    <td class="px-4 py-3 text-sm">R$ ${produto.valor.toFixed(2).replace('.', ',')}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-secondary">R$ ${valorTotal.toFixed(2).replace('.', ',')}</td>
+                    <td class="px-4 py-3 text-sm text-center">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="abrirEdicao(${produto.id})" class="text-blue-600 hover:text-blue-800 transition-colors" title="Editar">
+                                <i class="fa fa-pencil"></i>
+                            </button>
+                            <button onclick="excluirProduto(${produto.id})" class="text-red-600 hover:text-red-800 transition-colors" title="Excluir">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tabelaProdutos.appendChild(linha);
+            });
+        }
+
+        function atualizarRelatorios() {
+            const totalProdutos = produtos.length;
+            const totalQuantidade = produtos.reduce((soma, p) => soma + p.quantidade, 0);
+            const valorTotal = produtos.reduce((soma, p) => soma + (p.quantidade * p.valor), 0);
+            const mediaValor = totalProdutos > 0 ? valorTotal / totalProdutos : 0;
+
+            document.getElementById('relTotalProdutos').textContent = totalProdutos;
+            document.getElementById('relTotalQuantidade').textContent = totalQuantidade;
+            document.getElementById('relValorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('relMediaValor').textContent = `R$ ${mediaValor.toFixed(2).replace('.', ',')}`;
+        }
+
+        function abrirEdicao(id) {
+            const produto = produtos.find(p => p.id === id);
+            if (!produto) return;
+
+            idEdicao = id;
+            document.getElementById('editId').value = produto.id;
+            document.getElementById('editNome').value = produto.nome;
+            document.getElementById('editCategoria').value = produto.categoria;
+            document.getElementById('editQuantidade').value = produto.quantidade;
+            document.getElementById('editValor').value = produto.valor;
+
+            modalEditar.classList.remove('hidden');
+        }
+
+        function salvarEdicao(e) {
+            e.preventDefault();
+            
+            const index = produtos.findIndex(p => p.id === idEdicao);
+            if (index === -1) return;
+
+            produtos[index] = {
+                id: idEdicao,
+                nome: document.getElementById('editNome').value,
+                categoria: document.getElementById('editCategoria').value,
+                quantidade: parseInt(document.getElementById('editQuantidade').value),
+                valor: parseFloat(document.getElementById('editValor').value)
+            };
+
+            salvarDados();
+            modalEditar.classList.add('hidden');
+            atualizarTabela();
+            atualizarRelatorios();
+        }
+
+        function excluirProduto(id) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                produtos = produtos.filter(p => p.id !== id);
+                salvarDados();
+                atualizarTabela();
+                atualizarRelatorios();
+            }
+        }
+
+        function salvarDados() {
+            localStorage.setItem('produtos', JSON.stringify(produtos));
+        }
+    </script>
+</body>
+</html>
